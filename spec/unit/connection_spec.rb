@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 require 'excon'
-require 'excon/connection'
 
 describe Excon::Connection do
   subject(:connection) { Excon::Connection.new params }

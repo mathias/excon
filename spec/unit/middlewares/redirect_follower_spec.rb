@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 require 'excon'
-require 'excon/middlewares/base'
-require 'excon/middlewares/redirect_follower'
 
 describe Excon::Middleware::RedirectFollower do
   subject(:middleware) { Excon::Middleware::RedirectFollower.new [] }
