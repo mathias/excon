@@ -1,18 +1,23 @@
 require 'spec_helper'
 
 require 'excon'
-require 'excon/middlewares/base'
-require 'excon/middlewares/redirect_follower'
+require 'excon/connection'
 
 describe Excon::Connection do
   subject(:connection) { Excon::Connection.new params }
 
   before do
     @socket = instance_double(Excon::Socket)
+    allow(@socket).to receive(:write)
     allow(@socket).to receive(:readline)
+    allow(@socket).to receive(:close)
 
     klass_double = class_double(Excon::Socket).as_stubbed_const
     allow(klass_double).to receive(:new).and_return(@socket)
+
+    response_klass_double = class_double(Excon::Response).as_stubbed_const
+    allow(response_klass_double).to receive(:new)
+    allow(response_klass_double).to receive(:parse).and_return({})
   end
 
   describe '.new' do
@@ -34,7 +39,9 @@ describe Excon::Connection do
 
         it 'does not set Basic Auth on the request' do
           expect(@socket).to receive(:data=).
-            with(hash_including(headers: {}))
+            with(hash_including(headers: {
+            "Host"=>"localhost:9292"
+          }))
 
           connection.request
         end
